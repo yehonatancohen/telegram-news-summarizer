@@ -9,13 +9,14 @@ class Telegram:
         self.api_hash = api_hash
         self.client = TelegramClient(session_name, self.api_id, self.api_hash)
         self.client.add_event_handler(self.handle_message, events.NewMessage)
+        
 
-    async def connect(self):
+    async def connect(self, phone_number, password=None):
         # Connect to the Telegram API
-        await self.client.start()
+        await self.client.start(phone_number, password)
+        if not await self.client.is_user_authorized():
+            logger.info("User not authorized")
         logger.info("Connected to Telegram API")
-        await self.listen_messages()
-        await self.client.run_until_disconnected()
 
     def handle_message(self, event):
         # Handle incoming messages
@@ -27,7 +28,8 @@ class Telegram:
         async def handle_message(event):
             logger.info("Received message:", event.message.text)
 
-        self.client.run_until_disconnected()
+        await self.client.run_until_disconnected()
+        
 
     async def is_user_in_channel(self, channel_username):
         try:
@@ -50,10 +52,10 @@ class Telegram:
         # Join a Telegram channel
         # Check if already in channel
         if await self.is_user_in_channel(channel_id):
-            logger.info("Already in channel:", channel_id)
+            logger.info("Already in channel: " + channel_id)
         else:
             await self.client(JoinChannelRequest(channel_id))
-            logger.info("Joined channel:", channel_id)
+            logger.info("Joined channel: " + channel_id)
 
     async def leave_channel(self, channel_id):
         # Leave a Telegram channel
