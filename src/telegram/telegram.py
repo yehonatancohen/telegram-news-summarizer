@@ -1,7 +1,7 @@
 from telethon.sync import TelegramClient, events
 from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelRequest, GetFullChannelRequest
 from telethon.errors import ChannelPrivateError
-from src.utils import logger
+from utils import logger
 
 class Telegram:
     def __init__(self, api_id, api_hash, session_name="default_session"):

@@ -1,6 +1,9 @@
-from .utils import logger
-from .telegram import Telegram
-import asyncio
+from utils import logger
+from telegram import Telegram
+import asyncio, sys, os
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
 from config import get_env_variable
 
 async def main():
