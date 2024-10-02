@@ -58,18 +58,12 @@ async def main():
         '@AsrarLubnan'
     ]
 
-    for channel in arab_channels:
-        add_telegram_channel(channel, 'Arab', 1)
-    for channel in smart_channels:
-        add_telegram_channel(channel, 'Smart', 2)
 
-    channels = get_telegram_channels()
-    print(channels)
+    # Join the channels
+    channels = [{'id': channel, 'name': 'Arab', 'reliability': 1} for channel in arab_channels]
+    channels += [{'id': channel, 'name': 'Smart', 'reliability': 2} for channel in smart_channels]
 
-    # Join channels
-    #channel_ids = get_env_variable("CHANNEL_IDS").split(",")
-    for channel in channels:
-        await telegram.join_channel(channel['id'])
+    await telegram.join_channels(channels)
 
     # Listen to incoming messages
     await telegram.listen_messages()

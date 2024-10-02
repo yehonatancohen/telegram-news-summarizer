@@ -1,5 +1,6 @@
 from telethon.sync import TelegramClient, events
 from telethon.tl.functions.channels import JoinChannelRequest, LeaveChannelRequest, GetFullChannelRequest
+from db import init_channels, add_telegram_channel, get_telegram_channels, add_multiple_telegram_channels
 from telethon.errors import ChannelPrivateError
 from utils import logger
 
@@ -48,14 +49,29 @@ class Telegram:
             logger.error(f"An error occurred: {e}")
             return False
 
-    async def join_channel(self, channel_id):
+    async def join_channel(self, channel_id, type, reliability=1):
         # Join a Telegram channel
+
+        # Add to database
+        add_telegram_channel(channel_id, type, reliability)
+
         # Check if already in channel
         if await self.is_user_in_channel(channel_id):
             logger.info("Already in channel: " + channel_id)
         else:
             await self.client(JoinChannelRequest(channel_id))
             logger.info("Joined channel: " + channel_id)
+
+    async def join_channels(self, channels):
+        # Join multiple Telegram channels
+        add_multiple_telegram_channels(channels)
+
+        for channel in channels:
+            if await self.is_user_in_channel(channel['id']):
+                logger.info("Already in channel: " + channel['id'])
+            else:
+                await self.client(JoinChannelRequest(channel['id']))
+                logger.info("Joined channel: " + channel['id'])
 
     async def leave_channel(self, channel_id):
         # Leave a Telegram channel
