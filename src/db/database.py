@@ -1,5 +1,5 @@
 
-from .db_actions import create_connection, create_table, insert_data, select_all
+from .db_actions import create_connection, create_table, insert_data, select_all, insert_multiple_channels
 
 def init_channels():
     database = r"channels.db"
@@ -36,9 +36,23 @@ def add_telegram_channel(channel_id, name, reliability):
     :return: last row id
     """
 
-    conn = create_connection(r"channels.db")
+    conn = create_connection(r"channels.db", timeout=10)
 
     lastrowid = insert_data(conn, 'channels', {'id': channel_id, 'name': name, 'reliability': reliability})
+
+    return lastrowid
+
+def add_multiple_telegram_channels(channels):
+    """
+    Add multiple telegram channels to the channels table
+    :param conn: Connection object
+    :param channels: list of dictionaries of channels
+    :return: last row id
+    """
+
+    conn = create_connection(r"channels.db", timeout=10)
+
+    lastrowid = insert_multiple_channels(conn, 'channels', channels)
 
     return lastrowid
 
